@@ -25,7 +25,7 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
 
   body {
     background: var(--charcoal);
@@ -59,10 +59,18 @@
 
   .header-inner {
     background: linear-gradient(135deg, var(--wine-deep) 0%, var(--wine) 50%, var(--wine-mid) 100%);
-    padding: 52px 48px 0;
-    margin: 0 -48px;
+    padding: 52px 0 0;
+    width: 100vw;
     position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     overflow: hidden;
+  }
+
+  .header-content {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 48px;
   }
 
   .header-inner::before {
@@ -500,9 +508,18 @@
   /* ── FOOTER ── */
   footer {
     background: var(--wine-deep);
-    margin: 0 -48px;
-    padding: 28px 48px;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 28px 0;
     border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .footer-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -613,8 +630,9 @@
   /* ── RESPONSIVE ── */
   @media (max-width: 600px) {
     .wrapper { padding: 0 24px; }
-    .header-inner { padding: 40px 24px 0; margin: 0 -24px; }
-    footer { margin: 0 -24px; padding: 24px; }
+    .header-inner { margin: 0 -24px; }
+    .header-content { padding: 0 24px; }
+    .footer-inner { padding: 0 24px; }
     .section-header { flex-direction: column; gap: 8px; }
   }
 </style>
@@ -645,6 +663,7 @@
 
   <header>
     <div class="header-inner">
+      <div class="header-content">
       <span class="header-label">Portfolio — Abdul Muqheeth</span>
       <h1><span id="f-name" contenteditable="true" data-key="name" data-placeholder="Your Name"></span></h1>
       <p class="tagline-wrap">
@@ -655,6 +674,7 @@
         <button class="nav-btn" data-section="projects">Projects</button>
         <button class="nav-btn" data-section="skills">Skills</button>
       </nav>
+      </div>
     </div>
   </header>
 
@@ -731,9 +751,11 @@
   </main>
 
   <footer>
-    <span id="footerText"></span>
-    <div class="footer-dot"></div>
-    <span id="footerYear"></span>
+    <div class="footer-inner">
+      <span id="footerText"></span>
+      <div class="footer-dot"></div>
+      <span id="footerYear"></span>
+    </div>
   </footer>
 
 </div>
