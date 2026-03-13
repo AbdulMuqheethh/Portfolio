@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Abdul Muqheeth — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --wine:       #6b1223;
+    --wine-deep:  #4a0d18;
+    --wine-mid:   #8c1a2e;
+    --wine-light: #b02a42;
+    --wine-soft:  rgba(107,18,35,0.09);
+    --charcoal:   #1a1614;
+    --charcoal2:  #221c1a;
+    --charcoal3:  #2e2522;
+    --ivory:      #f2ead8;
+    --ivory2:     #e8ddc4;
+    --text-main:  #f0e6d0;
+    --text-muted: #b09a80;
+    --text-faint: #7a6a58;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--charcoal);
+    color: var(--text-main);
+    font-family: var(--serif);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--wine-light), var(--wine-deep) 60%, transparent);
+    z-index: 100;
+  }
+
+  .wrapper { max-width: 820px; margin: 0 auto; padding: 0 48px; }
+
+  /* ── HEADER ── */
+  header { padding: 0; animation: fadeUp 0.7s ease both; }
+
+  .header-inner {
+    background: linear-gradient(135deg, var(--wine-deep) 0%, var(--wine) 50%, var(--wine-mid) 100%);
+    padding: 52px 48px 0;
+    margin: 0 -48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header-inner::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .header-inner::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, rgba(255,255,255,0.12), transparent 70%);
+  }
+
+  .header-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 18px;
+    display: block;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(44px, 8vw, 76px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.0;
+    color: var(--ivory);
+    margin-bottom: 12px;
+  }
+
+  .tagline-wrap {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(242,234,216,0.55);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+
+  nav { display: flex; gap: 0; position: relative; }
+
+  .nav-btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(242,234,216,0.45);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 10px 20px 12px;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+    margin-right: 4px;
+  }
+
+  .nav-btn:hover { color: var(--ivory); background: rgba(255,255,255,0.06); }
+  .nav-btn.active { color: var(--ivory); border-bottom-color: var(--ivory); background: rgba(255,255,255,0.08); }
+
+  /* ── LOCK BUTTON ── */
+  #lockBtn {
+    position: fixed;
+    bottom: 24px; left: 24px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--charcoal3);
+    border: 1px solid var(--charcoal3);
+    color: var(--text-faint);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 500;
+    transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    opacity: 0.4;
+  }
+
+  #lockBtn:hover { opacity: 1; border-color: var(--wine-mid); color: var(--wine-light); box-shadow: 0 0 12px rgba(107,18,35,0.4); }
+
+  body.edit-mode #lockBtn {
+    opacity: 1;
+    background: var(--wine);
+    border-color: var(--wine-mid);
+    color: var(--ivory);
+    box-shadow: 0 0 14px rgba(107,18,35,0.5);
+  }
+
+  /* ── EDIT MODE BANNER ── */
+  #editBanner {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: var(--wine);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(242,234,216,0.8);
+    text-align: center;
+    padding: 7px;
+    z-index: 999;
+  }
+
+  body.edit-mode #editBanner { display: block; }
+  body.edit-mode main, body.edit-mode header { margin-top: 0; }
+  body.edit-mode { padding-top: 32px; }
+
+  /* ── MAIN ── */
+  main { padding: 52px 0 100px; }
+
+  .section { display: none; }
+  .section.visible { display: block; animation: fadeUp 0.4s ease both; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 38px;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--charcoal3);
+    position: relative;
+  }
+
+  .section-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0;
+    width: 60px; height: 2px;
+    background: var(--wine-light);
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: 38px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ivory);
+    letter-spacing: -0.01em;
+  }
+
+  .hint {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* only show hints in edit mode */
+  .edit-only-hint { display: none; }
+  body.edit-mode .edit-only-hint { display: inline; }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--charcoal3), transparent);
+    margin: 40px 0;
+    position: relative;
+  }
+
+  .divider::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 40px; height: 1px;
+    background: var(--wine-mid);
+  }
+
+  /* ── EDITABLES ── */
+  [contenteditable] {
+    outline: none;
+    border-bottom: 1px dashed transparent;
+    transition: border-color 0.2s, background 0.2s;
+    border-radius: 2px;
+    padding: 2px 5px;
+    /* not editable by default */
+    pointer-events: none;
+    cursor: default;
+  }
+
+  /* only interactive in edit mode */
+  body.edit-mode [contenteditable] {
+    pointer-events: auto;
+    cursor: text;
+  }
+
+  body.edit-mode [contenteditable]:hover { border-bottom-color: var(--wine-light); }
+  body.edit-mode [contenteditable]:focus { border-bottom-color: var(--wine-light); background: var(--wine-soft); }
+
+  [contenteditable][data-empty="true"]::before {
+    content: attr(data-placeholder);
+    color: var(--text-faint);
+    font-style: italic;
+    pointer-events: none;
+  }
+
+  /* ── ABOUT ── */
+  .bio-text {
+    font-size: 19px;
+    line-height: 1.9;
+    color: var(--text-muted);
+    max-width: 580px;
+    display: block;
+  }
+
+  .contact-grid { display: flex; flex-direction: column; gap: 0; }
+
+  .contact-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--charcoal3);
+  }
+
+  .contact-row:first-child { border-top: 1px solid var(--charcoal3); }
+
+  .contact-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--wine-light);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    width: 72px;
+    flex-shrink: 0;
+  }
+
+  .contact-value {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    min-width: 200px;
+  }
+
+  /* hide empty contact rows from visitors */
+  .contact-row.hidden-empty { display: none; }
+  body.edit-mode .contact-row.hidden-empty { display: flex; }
+
+  /* ── SKILLS ── */
+  .skills-wrap { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; }
+
+  .skill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--charcoal2);
+    border: 1px solid var(--charcoal3);
+    border-radius: 2px;
+    padding: 7px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+
+  .skill-tag:hover { border-color: var(--wine-mid); background: var(--wine-soft); color: var(--ivory2); }
+
+  .skill-remove {
+    background: none; border: none;
+    cursor: pointer;
+    color: var(--text-faint);
+    font-size: 15px; line-height: 1;
+    transition: color 0.2s;
+    padding: 0;
+    display: none;
+  }
+
+  body.edit-mode .skill-remove { display: inline; }
+  .skill-remove:hover { color: var(--wine-light); }
+
+  /* add skill row — edit only */
+  .add-skill-row { display: none; gap: 10px; max-width: 400px; margin-top: 4px; }
+  body.edit-mode .add-skill-row { display: flex; }
+
+  /* ── PROJECTS ── */
+  .project-card {
+    background: var(--charcoal2);
+    border: 1px solid var(--charcoal3);
+    border-radius: 3px;
+    padding: 28px 32px;
+    margin-bottom: 14px;
+    position: relative;
+    transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--charcoal3);
+    border-radius: 3px 0 0 3px;
+    transition: background 0.3s;
+  }
+
+  .project-card:hover { box-shadow: 0 8px 36px rgba(107,18,35,0.25); border-color: var(--wine-mid); transform: translateY(-1px); }
+  .project-card:hover::before { background: var(--wine-light); }
+
+  .project-tag-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--wine-light);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .project-title {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--ivory);
+    margin-bottom: 10px;
+    display: block;
+    letter-spacing: -0.01em;
+  }
+
+  .project-desc {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    display: block;
+  }
+
+  .card-remove {
+    position: absolute;
+    top: 14px; right: 16px;
+    background: none; border: none;
+    cursor: pointer;
+    color: var(--text-faint);
+    font-size: 20px; line-height: 1;
+    transition: color 0.2s;
+    padding: 2px 6px;
+    display: none;
+  }
+
+  body.edit-mode .card-remove { display: block; }
+  .card-remove:hover { color: var(--wine-light); }
+
+  /* add project button & form — edit only */
+  #openAddProject { display: none; }
+  body.edit-mode #openAddProject { display: inline-flex; align-items: center; }
+
+  .add-form {
+    background: var(--charcoal2);
+    border: 1px dashed var(--wine-mid);
+    border-radius: 3px;
+    padding: 28px 32px;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .add-form.open { display: block; animation: fadeUp 0.3s ease both; }
+
+  .form-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--wine-light);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: block;
+  }
+
+  .form-fields { display: flex; flex-direction: column; gap: 10px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 80px 0;
+    color: var(--text-faint);
+    border: 1px dashed var(--charcoal3);
+    border-radius: 3px;
+  }
+
+  .empty-state p { font-family: var(--serif); font-size: 24px; font-weight: 300; font-style: italic; margin-bottom: 8px; color: var(--text-muted); }
+  .empty-state small { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ── INPUTS ── */
+  input.inp, textarea.inp {
+    font-family: var(--serif);
+    font-size: 16px;
+    background: var(--charcoal3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2px;
+    padding: 10px 14px;
+    width: 100%;
+    color: var(--ivory);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  input.inp::placeholder, textarea.inp::placeholder { color: var(--text-faint); }
+  input.inp:focus, textarea.inp:focus { border-color: var(--wine-mid); background: rgba(107,18,35,0.12); }
+  textarea.inp { resize: vertical; font-family: var(--serif); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid var(--wine-mid);
+    background: none;
+    color: var(--wine-light);
+    padding: 10px 20px;
+    border-radius: 2px;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn:hover { background: var(--wine-mid); color: var(--ivory); }
+
+  .btn-wine { background: var(--wine); color: var(--ivory); border-color: var(--wine); }
+  .btn-wine:hover { background: var(--wine-mid); border-color: var(--wine-mid); }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--wine-deep);
+    margin: 0 -48px;
+    padding: 28px 48px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  footer span { font-family: var(--mono); font-size: 10px; color: rgba(242,234,216,0.35); letter-spacing: 0.12em; }
+  .footer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--wine-mid); opacity: 0.6; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    background: var(--wine);
+    color: var(--ivory);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 2px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+    z-index: 10000;
+    border-left: 3px solid var(--ivory2);
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── PASSWORD MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(20,14,12,0.88);
+    z-index: 2000;
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-box {
+    background: var(--charcoal2);
+    border: 1px solid var(--charcoal3);
+    border-top: 3px solid var(--wine-light);
+    border-radius: 4px;
+    padding: 36px 40px;
+    width: 340px;
+    max-width: 90vw;
+    animation: fadeUp 0.25s ease;
+  }
+
+  .modal-title {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ivory);
+    margin-bottom: 6px;
+  }
+
+  .modal-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .modal-input {
+    width: 100%;
+    font-family: var(--mono);
+    font-size: 15px;
+    background: var(--charcoal3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2px;
+    padding: 10px 14px;
+    color: var(--ivory);
+    outline: none;
+    margin-bottom: 14px;
+    letter-spacing: 0.15em;
+    transition: border-color 0.2s;
+  }
+
+  .modal-input:focus { border-color: var(--wine-mid); }
+  .modal-input.shake { animation: shake 0.35s ease; border-color: var(--wine-light); }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-8px); }
+    40%       { transform: translateX(8px); }
+    60%       { transform: translateX(-5px); }
+    80%       { transform: translateX(5px); }
+  }
+
+  .modal-error {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--wine-light);
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+    min-height: 16px;
+  }
+
+  .modal-btns { display: flex; gap: 10px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .wrapper { padding: 0 24px; }
+    .header-inner { padding: 40px 24px 0; margin: 0 -24px; }
+    footer { margin: 0 -24px; padding: 24px; }
+    .section-header { flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Edit mode banner -->
+<div id="editBanner">✎ &nbsp; Edit Mode — only you can see this</div>
+
+<!-- Lock / unlock button -->
+<button id="lockBtn" title="Owner login">🔒</button>
+
+<!-- Password modal (hidden by default) -->
+<div class="modal-overlay" id="modal" style="display:none;">
+  <div class="modal-box">
+    <p class="modal-title">Owner Access</p>
+    <p class="modal-sub">Enter your password to edit</p>
+    <input class="modal-input" id="pwInput" type="password" placeholder="Password" autocomplete="off"/>
+    <p class="modal-error" id="pwError"></p>
+    <div class="modal-btns">
+      <button class="btn btn-wine" id="pwSubmit">Unlock</button>
+      <button class="btn" id="pwCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+  <header>
+    <div class="header-inner">
+      <span class="header-label">Portfolio — Abdul Muqheeth</span>
+      <h1><span id="f-name" contenteditable="true" data-key="name" data-placeholder="Your Name"></span></h1>
+      <p class="tagline-wrap">
+        <span id="f-tagline" contenteditable="true" data-key="tagline" data-placeholder="Your tagline"></span>
+      </p>
+      <nav>
+        <button class="nav-btn active" data-section="about">About</button>
+        <button class="nav-btn" data-section="projects">Projects</button>
+        <button class="nav-btn" data-section="skills">Skills</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ABOUT -->
+    <section id="about" class="section visible">
+      <div class="section-header">
+        <h2 class="section-title">About</h2>
+        <span class="hint edit-only-hint">click text to edit</span>
+      </div>
+      <span id="f-bio" class="bio-text" contenteditable="true" data-key="bio" data-placeholder="Write something about yourself..."></span>
+
+      <div class="divider"></div>
+
+      <h3 style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--wine-light);margin-bottom:0;">Contact</h3>
+      <div class="contact-grid">
+        <div class="contact-row" id="row-email">
+          <span class="contact-label">Email</span>
+          <span id="f-email" class="contact-value" contenteditable="true" data-key="email" data-placeholder="your@email.com"></span>
+        </div>
+        <div class="contact-row" id="row-github">
+          <span class="contact-label">GitHub</span>
+          <span id="f-github" class="contact-value" contenteditable="true" data-key="github" data-placeholder="github.com/username"></span>
+        </div>
+        <div class="contact-row" id="row-linkedin">
+          <span class="contact-label">LinkedIn</span>
+          <span id="f-linkedin" class="contact-value" contenteditable="true" data-key="linkedin" data-placeholder="linkedin.com/in/username"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+      <div class="section-header">
+        <h2 class="section-title">Projects</h2>
+        <button class="btn btn-wine" id="openAddProject">+ Add Project</button>
+      </div>
+
+      <div class="add-form" id="addForm">
+        <span class="form-label">New Project</span>
+        <div class="form-fields">
+          <input class="inp" id="newTitle" placeholder="Project title"/>
+          <textarea class="inp" id="newDesc" rows="3" placeholder="What did you build? What did you learn?"></textarea>
+          <input class="inp" id="newTag" placeholder="Tag  (e.g. Python, Web, Design)"/>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-wine" id="saveProject">Save</button>
+          <button class="btn" id="cancelProject">Cancel</button>
+        </div>
+      </div>
+
+      <div id="projectList"></div>
+
+      <div class="empty-state" id="emptyState">
+        <p>No projects yet</p>
+        <small id="emptyHint">Check back soon</small>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="section">
+      <div class="section-header">
+        <h2 class="section-title">Skills</h2>
+        <span class="hint edit-only-hint">click × to remove</span>
+      </div>
+      <div class="skills-wrap" id="skillsWrap"></div>
+      <div class="add-skill-row">
+        <input class="inp" id="newSkill" placeholder="Add a skill…"/>
+        <button class="btn btn-wine" id="addSkillBtn">+ Add</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span id="footerText"></span>
+    <div class="footer-dot"></div>
+    <span id="footerYear"></span>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ─────────────────────────────────────────────────────────
+// Change this to whatever password you want!
+const OWNER_PASSWORD = 'idkig';
+const STORE = 'amq_portfolio_v4';
+
+const DEFAULTS = {
+  name:     'Abdul Muqheeth',
+  tagline:  'Student & Aspiring Developer',
+  bio:      "Hey! I'm Abdul Muqheeth. This is my personal space to track my growth, projects, and skills. Feel free to look around!",
+  email:    '',
+  github:   '',
+  linkedin: '',
+  skills:   [],
+  projects: []
+};
+
+// ─── STATE ──────────────────────────────────────────────────────────
+function load() {
+  try {
+    const raw = localStorage.getItem(STORE);
+    return raw ? Object.assign({}, DEFAULTS, JSON.parse(raw)) : Object.assign({}, DEFAULTS);
+  } catch { return Object.assign({}, DEFAULTS); }
+}
+
+function persist() {
+  try { localStorage.setItem(STORE, JSON.stringify(state)); } catch {}
+}
+
+let state = load();
+let editMode = false;
+
+// ─── TOAST ──────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg || 'Saved ✓';
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+// ─── EDIT MODE TOGGLE ───────────────────────────────────────────────
+function enterEditMode() {
+  editMode = true;
+  document.body.classList.add('edit-mode');
+  document.getElementById('lockBtn').textContent = '🔓';
+  document.getElementById('lockBtn').title = 'Exit edit mode';
+  document.getElementById('emptyHint').textContent = 'Hit "+ Add Project" whenever you\'re ready';
+  updateContactVisibility();
+  renderSkills();
+  renderProjects();
+  toast('Edit mode on ✓');
+}
+
+function exitEditMode() {
+  editMode = false;
+  document.body.classList.remove('edit-mode');
+  document.getElementById('lockBtn').textContent = '🔒';
+  document.getElementById('lockBtn').title = 'Owner login';
+  document.getElementById('emptyHint').textContent = 'Check back soon';
+  // close add form if open
+  document.getElementById('addForm').classList.remove('open');
+  updateContactVisibility();
+  renderSkills();
+  renderProjects();
+  toast('Edit mode off');
+}
+
+document.getElementById('lockBtn').addEventListener('click', () => {
+  if (editMode) {
+    exitEditMode();
+  } else {
+    openModal();
+  }
+});
+
+// ─── PASSWORD MODAL ─────────────────────────────────────────────────
+function openModal() {
+  const modal = document.getElementById('modal');
+  modal.style.display = 'flex';
+  document.getElementById('pwInput').value = '';
+  document.getElementById('pwError').textContent = '';
+  setTimeout(() => document.getElementById('pwInput').focus(), 50);
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+
+function tryUnlock() {
+  const val = document.getElementById('pwInput').value;
+  if (val === OWNER_PASSWORD) {
+    closeModal();
+    enterEditMode();
+  } else {
+    const inp = document.getElementById('pwInput');
+    document.getElementById('pwError').textContent = 'Incorrect password.';
+    inp.classList.remove('shake');
+    void inp.offsetWidth; // reflow to restart animation
+    inp.classList.add('shake');
+    inp.value = '';
+    inp.focus();
+  }
+}
+
+document.getElementById('pwSubmit').addEventListener('click', tryUnlock);
+document.getElementById('pwCancel').addEventListener('click', closeModal);
+document.getElementById('pwInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') tryUnlock();
+  if (e.key === 'Escape') closeModal();
+});
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal')) closeModal();
+});
+
+// ─── PLACEHOLDER HELPER ─────────────────────────────────────────────
+function refreshEmpty(el) {
+  el.dataset.empty = el.textContent.trim() === '' ? 'true' : 'false';
+}
+
+// ─── CONTACT VISIBILITY ─────────────────────────────────────────────
+// Hide rows with no content from visitors
+function updateContactVisibility() {
+  [['row-email','email'],['row-github','github'],['row-linkedin','linkedin']].forEach(([rowId, key]) => {
+    const row = document.getElementById(rowId);
+    if (!editMode && !state[key]) {
+      row.classList.add('hidden-empty');
+    } else {
+      row.classList.remove('hidden-empty');
+    }
+  });
+}
+
+// ─── EDITABLES ──────────────────────────────────────────────────────
+function initEditables() {
+  const map = {
+    'f-name':    'name',
+    'f-tagline': 'tagline',
+    'f-bio':     'bio',
+    'f-email':   'email',
+    'f-github':  'github',
+    'f-linkedin':'linkedin',
+  };
+
+  Object.entries(map).forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = state[key] || '';
+    refreshEmpty(el);
+
+    el.addEventListener('focus', () => { if (!editMode) { el.blur(); return; } el.dataset.empty = 'false'; });
+    el.addEventListener('blur', () => {
+      if (!editMode) return;
+      state[key] = el.textContent.trim();
+      persist();
+      refreshEmpty(el);
+      if (key === 'name') syncFooter();
+      if (['email','github','linkedin'].includes(key)) updateContactVisibility();
+      toast();
+    });
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && key !== 'bio') { e.preventDefault(); el.blur(); }
+    });
+  });
+}
+
+function syncFooter() {
+  document.getElementById('footerText').textContent = state.name || 'Abdul Muqheeth';
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+  document.title = (state.name || 'Portfolio') + ' — Portfolio';
+}
+
+// ─── NAV ────────────────────────────────────────────────────────────
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.section).classList.add('visible');
+  });
+});
+
+// ─── SKILLS ─────────────────────────────────────────────────────────
+function renderSkills() {
+  const wrap = document.getElementById('skillsWrap');
+  wrap.innerHTML = '';
+
+  if (!state.skills.length && !editMode) {
+    wrap.innerHTML = '<span style="font-family:var(--mono);font-size:11px;color:var(--text-faint);">Coming soon…</span>';
+    return;
+  }
+
+  state.skills.forEach((skill, i) => {
+    const tag = document.createElement('span');
+    tag.className = 'skill-tag';
+    tag.appendChild(document.createTextNode(skill + ' '));
+    const rm = document.createElement('button');
+    rm.className = 'skill-remove';
+    rm.title = 'Remove';
+    rm.textContent = '×';
+    rm.addEventListener('click', () => {
+      state.skills.splice(i, 1);
+      persist(); renderSkills(); toast('Removed');
+    });
+    tag.appendChild(rm);
+    wrap.appendChild(tag);
+  });
+}
+
+function addSkill() {
+  const inp = document.getElementById('newSkill');
+  const val = inp.value.trim();
+  if (!val) return;
+  state.skills.push(val);
+  persist(); renderSkills();
+  inp.value = ''; inp.focus();
+  toast('Skill added ✓');
+}
+
+document.getElementById('addSkillBtn').addEventListener('click', addSkill);
+document.getElementById('newSkill').addEventListener('keydown', e => { if (e.key === 'Enter') addSkill(); });
+
+// ─── PROJECTS ───────────────────────────────────────────────────────
+function renderProjects() {
+  const list = document.getElementById('projectList');
+  const empty = document.getElementById('emptyState');
+  list.innerHTML = '';
+
+  if (!state.projects.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  state.projects.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+
+    // remove btn (edit only via CSS)
+    const rm = document.createElement('button');
+    rm.className = 'card-remove';
+    rm.title = 'Remove';
+    rm.textContent = '×';
+    rm.addEventListener('click', () => {
+      state.projects.splice(i, 1);
+      persist(); renderProjects(); toast('Removed');
+    });
+    card.appendChild(rm);
+
+    if (p.tag) {
+      const tagEl = document.createElement('span');
+      tagEl.className = 'project-tag-label';
+      tagEl.contentEditable = editMode ? 'true' : 'false';
+      tagEl.textContent = p.tag;
+      tagEl.addEventListener('blur', () => { if (!editMode) return; state.projects[i].tag = tagEl.textContent.trim(); persist(); toast(); });
+      card.appendChild(tagEl);
+    }
+
+    const titleEl = document.createElement('span');
+    titleEl.className = 'project-title';
+    titleEl.contentEditable = editMode ? 'true' : 'false';
+    titleEl.textContent = p.title;
+    titleEl.addEventListener('blur', () => { if (!editMode) return; state.projects[i].title = titleEl.textContent.trim(); persist(); toast(); });
+    titleEl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); } });
+    card.appendChild(titleEl);
+
+    const descEl = document.createElement('span');
+    descEl.className = 'project-desc';
+    descEl.contentEditable = editMode ? 'true' : 'false';
+    descEl.textContent = p.desc || '';
+    descEl.dataset.placeholder = 'Add a description…';
+    refreshEmpty(descEl);
+    descEl.addEventListener('focus', () => descEl.dataset.empty = 'false');
+    descEl.addEventListener('blur', () => { if (!editMode) return; state.projects[i].desc = descEl.textContent.trim(); persist(); refreshEmpty(descEl); toast(); });
+    card.appendChild(descEl);
+
+    list.appendChild(card);
+  });
+}
+
+document.getElementById('openAddProject').addEventListener('click', () => {
+  document.getElementById('addForm').classList.add('open');
+  document.getElementById('newTitle').focus();
+});
+
+document.getElementById('cancelProject').addEventListener('click', () => {
+  document.getElementById('addForm').classList.remove('open');
+  clearForm();
+});
+
+document.getElementById('saveProject').addEventListener('click', saveProject);
+document.getElementById('newTitle').addEventListener('keydown', e => { if (e.key === 'Enter') saveProject(); });
+
+function saveProject() {
+  const title = document.getElementById('newTitle').value.trim();
+  if (!title) { document.getElementById('newTitle').focus(); return; }
+  state.projects.push({
+    title,
+    desc: document.getElementById('newDesc').value.trim(),
+    tag:  document.getElementById('newTag').value.trim(),
+    id:   Date.now()
+  });
+  persist(); renderProjects();
+  document.getElementById('addForm').classList.remove('open');
+  clearForm();
+  toast('Project added ✓');
+}
+
+function clearForm() {
+  ['newTitle','newDesc','newTag'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ─── BOOT ───────────────────────────────────────────────────────────
+syncFooter();
+initEditables();
+updateContactVisibility();
+renderSkills();
+renderProjects();
+</script>
+</body>
+</html>
