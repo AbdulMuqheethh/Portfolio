@@ -789,7 +789,7 @@ const OWNER_PASSWORD = 'idkig';
 // 2. Click "Create Bin", paste: {"name":"Abdul Muqheeth","tagline":"Student & Aspiring Developer","bio":"Hey! I'm Abdul Muqheeth. This is my personal space to track my growth, projects, and skills. Feel free to look around!","email":"","github":"","linkedin":"","categories":[],"skills":[],"projects":[]}
 // 3. Copy the Bin ID (looks like 64abc123...) and paste below
 // 4. Go to API Keys → Create Key → copy and paste below
-const BIN_ID  = '$2a$10$VKWfM8gW8h0Fjl60IGqKzuRmtkH2ijS1uAQhW40FBgerZOFuRpGxi';
+const BIN_ID  = '69b53fb1b7ec241ddc69a87f';
 const API_KEY = '$2a$10$VKWfM8gW8h0Fjl60IGqKzuRmtkH2ijS1uAQhW40FBgerZOFuRpGxi';
 const BIN_URL = `https://api.jsonbin.io/v3/b/69b53fb1b7ec241ddc69a87f`;
 
@@ -808,28 +808,46 @@ const DEFAULTS = {
 let state = Object.assign({}, DEFAULTS);
 let editMode = false;
 
-// ── LOAD from JSONBin (everyone sees same data)
+// ── LOAD from JSONBin with localStorage cache as fallback
 async function loadFromCloud() {
-  // show loading state
   document.getElementById('f-name').textContent = 'Loading...';
   try {
     const res = await fetch(BIN_URL + '/latest', {
-      headers: { 'X-Master-Key': API_KEY }
+      headers: {
+        'X-Master-Key': API_KEY,
+        'X-Bin-Meta': 'false'
+      }
     });
-    if (!res.ok) throw new Error('fetch failed');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
-    state = Object.assign({}, DEFAULTS, json.record);
+    // JSONBin wraps data in .record
+    const data = json.record || json;
+    state = Object.assign({}, DEFAULTS, data);
+    // cache locally so page still works if JSONBin is slow
+    localStorage.setItem('amq_cache', JSON.stringify(state));
+    console.log('✓ Loaded from cloud');
   } catch (e) {
-    console.warn('Cloud load failed, using defaults', e);
-    state = Object.assign({}, DEFAULTS);
+    console.warn('Cloud load failed:', e);
+    // try local cache
+    try {
+      const cached = localStorage.getItem('amq_cache');
+      if (cached) {
+        state = Object.assign({}, DEFAULTS, JSON.parse(cached));
+        console.log('✓ Loaded from cache');
+      } else {
+        state = Object.assign({}, DEFAULTS);
+      }
+    } catch { state = Object.assign({}, DEFAULTS); }
   }
   boot();
 }
 
-// ── SAVE to JSONBin (only owner in edit mode)
+// ── SAVE to JSONBin + update local cache
 async function persist() {
+  // update local cache immediately so UI feels instant
+  localStorage.setItem('amq_cache', JSON.stringify(state));
   try {
-    await fetch(BIN_URL, {
+    const res = await fetch(BIN_URL, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -837,9 +855,10 @@ async function persist() {
       },
       body: JSON.stringify(state)
     });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
   } catch (e) {
-    console.warn('Cloud save failed', e);
-    toast('⚠ Save failed — check connection');
+    console.warn('Cloud save failed:', e);
+    toast('⚠ Cloud save failed — saved locally only');
   }
 }
 
