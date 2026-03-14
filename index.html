@@ -783,7 +783,15 @@
 
 <script>
 const OWNER_PASSWORD = 'idkig';
-const STORE = 'amq_portfolio_v7';
+
+// ── JSONBIN CONFIG
+// 1. Go to https://jsonbin.io and sign up (free)
+// 2. Click "Create Bin", paste: {"name":"Abdul Muqheeth","tagline":"Student & Aspiring Developer","bio":"Hey! I'm Abdul Muqheeth. This is my personal space to track my growth, projects, and skills. Feel free to look around!","email":"","github":"","linkedin":"","categories":[],"skills":[],"projects":[]}
+// 3. Copy the Bin ID (looks like 64abc123...) and paste below
+// 4. Go to API Keys → Create Key → copy and paste below
+const BIN_ID  = '$2a$10$VKWfM8gW8h0Fjl60IGqKzuRmtkH2ijS1uAQhW40FBgerZOFuRpGxi';
+const API_KEY = '$2a$10$VKWfM8gW8h0Fjl60IGqKzuRmtkH2ijS1uAQhW40FBgerZOFuRpGxi';
+const BIN_URL = `https://api.jsonbin.io/v3/b/69b53fb1b7ec241ddc69a87f`;
 
 const DEFAULTS = {
   name:     'Abdul Muqheeth',
@@ -797,17 +805,48 @@ const DEFAULTS = {
   projects: []
 };
 
-function load() {
+let state = Object.assign({}, DEFAULTS);
+let editMode = false;
+
+// ── LOAD from JSONBin (everyone sees same data)
+async function loadFromCloud() {
+  // show loading state
+  document.getElementById('f-name').textContent = 'Loading...';
   try {
-    const raw = localStorage.getItem(STORE);
-    return raw ? Object.assign({}, DEFAULTS, JSON.parse(raw)) : Object.assign({}, DEFAULTS);
-  } catch { return Object.assign({}, DEFAULTS); }
+    const res = await fetch(BIN_URL + '/latest', {
+      headers: { 'X-Master-Key': API_KEY }
+    });
+    if (!res.ok) throw new Error('fetch failed');
+    const json = await res.json();
+    state = Object.assign({}, DEFAULTS, json.record);
+  } catch (e) {
+    console.warn('Cloud load failed, using defaults', e);
+    state = Object.assign({}, DEFAULTS);
+  }
+  boot();
 }
 
-function persist() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch {} }
+// ── SAVE to JSONBin (only owner in edit mode)
+async function persist() {
+  try {
+    await fetch(BIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': API_KEY
+      },
+      body: JSON.stringify(state)
+    });
+  } catch (e) {
+    console.warn('Cloud save failed', e);
+    toast('⚠ Save failed — check connection');
+  }
+}
 
-let state = load();
-let editMode = false;
+// Check if JSONBin is configured
+function isConfigured() {
+  return BIN_ID !== 'PASTE_YOUR_BIN_ID_HERE' && API_KEY !== 'PASTE_YOUR_API_KEY_HERE';
+}
 
 // ── TOAST
 let toastTimer;
@@ -826,6 +865,9 @@ function enterEditMode() {
   document.getElementById('lockBtn').textContent = '🔓';
   document.getElementById('lockBtn').title = 'Exit edit mode';
   document.getElementById('emptyHint').textContent = "Hit \"+ Add Project\" whenever you're ready";
+  if (!isConfigured()) {
+    toast('⚠ JSONBin not set up — changes won\'t be global yet!');
+  }
   updateContactVisibility();
   renderSkills();
   renderProjects();
@@ -1533,12 +1575,24 @@ document.addEventListener('input', e => {
   }
 });
 
-// ── BOOT
-syncFooter();
-initEditables();
-updateContactVisibility();
-renderSkills();
-renderProjects();
+// ── BOOT — called after cloud data loads
+function boot() {
+  syncFooter();
+  initEditables();
+  updateContactVisibility();
+  renderSkills();
+  renderProjects();
+}
+
+// ── START
+if (isConfigured()) {
+  loadFromCloud();
+} else {
+  // JSONBin not set up yet — show a setup reminder in edit mode only
+  state = Object.assign({}, DEFAULTS);
+  boot();
+  console.warn('JSONBin not configured. Add your BIN_ID and API_KEY to make edits global.');
+}
 </script>
 </body>
 </html>
