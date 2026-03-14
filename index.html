@@ -190,7 +190,7 @@
 
   .divider {
     height: 1px; background: linear-gradient(to right, rgba(255,255,255,0.08), transparent);
-    margin: 40px 0; position: relative;
+    margin: 48px 0 52px; position: relative;
   }
 
   .divider::before {
@@ -217,21 +217,29 @@
   /* ── ABOUT ── */
   .bio-text { font-size: 19px; line-height: 1.9; color: #ffffff; max-width: 580px; display: block; }
 
-  .contact-grid { display: flex; flex-direction: column; gap: 0; }
+  .contact-grid { display: flex; flex-direction: column; gap: 0; margin-top: 8px; }
 
   .contact-row {
-    display: flex; align-items: center; gap: 20px;
-    padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center; gap: 32px;
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    transition: background 0.2s;
+    border-radius: 2px;
   }
 
-  .contact-row:first-child { border-top: 1px solid rgba(255,255,255,0.05); }
+  .contact-row:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+  .contact-row:hover { background: rgba(255,255,255,0.03); }
 
   .contact-label {
     font-family: var(--mono); font-size: 9px; color: var(--wine-light);
-    text-transform: uppercase; letter-spacing: 0.2em; width: 72px; flex-shrink: 0;
+    text-transform: uppercase; letter-spacing: 0.25em; width: 80px; flex-shrink: 0;
   }
 
-  .contact-value { font-family: var(--mono); font-size: 13px; color: #ffffff; min-width: 200px; }
+  .contact-value {
+    font-family: var(--mono); font-size: 14px; color: #ffffff;
+    letter-spacing: 0.03em; min-width: 200px;
+  }
+
   .contact-row.hidden-empty { display: none; }
   body.edit-mode .contact-row.hidden-empty { display: flex; }
 
@@ -650,7 +658,7 @@
       </div>
       <span id="f-bio" class="bio-text" contenteditable="true" data-key="bio" data-placeholder="Write something about yourself..."></span>
       <div class="divider"></div>
-      <h3 style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--wine-light);margin-bottom:0;">Contact</h3>
+      <h3 style="font-family:var(--mono);font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--wine-light);margin-bottom:20px;margin-top:0;">Contact</h3>
       <div class="contact-grid">
         <div class="contact-row" id="row-email">
           <span class="contact-label">Email</span>
