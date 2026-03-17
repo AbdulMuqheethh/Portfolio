@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>"/>
 <title>Abdul Muqheeth — Portfolio</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -40,11 +39,13 @@
     overflow-x: hidden;
   }
 
+  /* grain texture overlay */
   body::after {
     content: '';
     position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
     pointer-events: none; z-index: 9998;
+    mix-blend-mode: overlay;
   }
 
   body::before { display: none; }
@@ -55,7 +56,9 @@
   header { padding: 0; animation: fadeUp 0.7s ease both; }
 
   .header-inner {
-    background: linear-gradient(135deg, var(--wine-deep) 0%, var(--wine) 50%, var(--wine-mid) 100%);
+    background:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E"),
+      linear-gradient(135deg, var(--wine-deep) 0%, var(--wine) 45%, var(--wine-mid) 80%, #a01828 100%);
     padding: 52px 0 0;
     width: 100vw;
     position: relative;
@@ -74,15 +77,9 @@
     -webkit-text-fill-color: #ffffff !important;
   }
 
-  .header-inner::before {
-    content: '';
-    position: absolute;
-    top: -80px; right: -80px;
-    width: 320px; height: 320px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-  }
+  .header-inner::before { display: none; }
+
+  .header-deco { display: none; }
 
   .header-inner::after {
     content: '';
@@ -172,6 +169,7 @@
   .section-header::after {
     content: ''; position: absolute; bottom: -1px; left: 0;
     width: 60px; height: 2px; background: var(--wine-light);
+    box-shadow: 0 0 10px rgba(176,42,66,0.7), 0 0 20px rgba(176,42,66,0.3);
   }
 
   .section-title {
@@ -184,8 +182,17 @@
   body.edit-mode .edit-only-hint { display: inline; }
 
   .divider {
-    height: 1px; background: linear-gradient(to right, rgba(255,255,255,0.08), transparent);
+    height: 1px;
+    background: linear-gradient(to right, rgba(176,42,66,0.4), rgba(255,255,255,0.06) 30%, transparent);
     margin: 48px 0 52px; position: relative;
+  }
+
+  .divider::before {
+    content: ''; position: absolute; left: 0; top: -1px;
+    width: 40px; height: 3px;
+    background: var(--wine-mid);
+    box-shadow: 0 0 8px rgba(140,26,46,0.8);
+    border-radius: 2px;
   }
 
   .divider::before {
@@ -383,8 +390,11 @@
      PROJECTS
   ══════════════════════════════ */
   .project-card {
-    background: var(--charcoal2); border: 1px solid var(--charcoal3);
-    border-radius: 3px; padding: 28px 32px; margin-bottom: 14px;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.015) 0%, transparent 60%),
+      var(--charcoal2);
+    border: 1px solid var(--charcoal3);
+    border-radius: 4px; padding: 28px 32px; margin-bottom: 14px;
     position: relative; transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s;
   }
 
@@ -438,10 +448,12 @@
   .skill-categories { display: flex; flex-direction: column; gap: 20px; }
 
   .skill-category {
-    background: var(--charcoal2);
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 50%),
+      var(--charcoal2);
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 6px; padding: 22px 24px;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
 
   .skill-category:hover { border-color: rgba(255,255,255,0.12); }
@@ -566,8 +578,11 @@
      PROJECTS
   ══════════════════════════════ */
   .project-card {
-    background: var(--charcoal2); border: 1px solid var(--charcoal3);
-    border-radius: 3px; padding: 28px 32px; margin-bottom: 14px;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.015) 0%, transparent 60%),
+      var(--charcoal2);
+    border: 1px solid var(--charcoal3);
+    border-radius: 4px; padding: 28px 32px; margin-bottom: 14px;
     position: relative; transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s;
   }
 
@@ -694,6 +709,18 @@
   .btn:hover { background: var(--wine-mid); color: var(--ivory); }
   .btn-wine { background: var(--wine); color: var(--ivory); border-color: var(--wine); }
   .btn-wine:hover { background: var(--wine-mid); border-color: var(--wine-mid); }
+
+  /* View Links special button */
+  .view-links-btn::before {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    transition: left 0.5s ease;
+    pointer-events: none;
+  }
+
+  .view-links-btn:hover::before { left: 150%; }
   .btn-row { display: flex; gap: 10px; margin-top: 16px; }
 
   /* ── VIDEO TABS ── */
@@ -735,6 +762,74 @@
 
   footer span { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 0.12em; }
   .footer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--wine-mid); opacity: 0.6; }
+
+  /* ── LINKS MODAL ── */
+  .links-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10,10,10,0.85);
+    z-index: 3000; display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .links-modal-box {
+    background: var(--charcoal2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-top: 3px solid var(--wine-light);
+    border-radius: 6px;
+    padding: 32px 36px;
+    width: 420px; max-width: 92vw;
+    animation: fadeUp 0.25s ease;
+  }
+
+  .links-modal-title {
+    font-family: var(--serif); font-size: 22px; font-weight: 300;
+    font-style: italic; color: #ffffff; margin-bottom: 4px;
+  }
+
+  .links-modal-sub {
+    font-family: var(--mono); font-size: 9px; color: #888;
+    letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 24px;
+  }
+
+  .links-modal-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+  .links-modal-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--charcoal3); border-radius: 4px; padding: 10px 14px;
+    text-decoration: none; transition: background 0.2s;
+  }
+
+  .links-modal-item:hover { background: rgba(176,42,66,0.15); }
+
+  .links-modal-item-icon {
+    font-size: 14px; flex-shrink: 0;
+  }
+
+  .links-modal-item-label {
+    font-family: var(--mono); font-size: 12px; color: #ffffff;
+    flex: 1; letter-spacing: 0.05em;
+  }
+
+  .links-modal-item-arrow {
+    font-size: 12px; color: var(--wine-light); flex-shrink: 0;
+  }
+
+  .links-modal-item-remove {
+    background: none; border: none; cursor: pointer;
+    color: #555; font-size: 16px; transition: color 0.2s; padding: 0 2px;
+    flex-shrink: 0;
+  }
+
+  .links-modal-item-remove:hover { color: var(--wine-light); }
+
+  .links-modal-close {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; background: none; border: 1px solid rgba(255,255,255,0.1);
+    color: #888; padding: 8px 18px; border-radius: 2px; cursor: pointer;
+    transition: all 0.2s; width: 100%;
+  }
+
+  .links-modal-close:hover { border-color: #fff; color: #fff; }
 
   /* ── TOAST ── */
   .toast {
@@ -819,6 +914,7 @@
 
   <header>
     <div class="header-inner">
+      <div class="header-deco"></div>
       <div class="header-content">
         <span class="header-label" style="color:#ffffff;">Portfolio — Abdul Muqheeth</span>
         <h1><span id="f-name" contenteditable="true" data-key="name" data-placeholder="Your Name" style="color:#ffffff;"></span></h1>
@@ -875,7 +971,13 @@
           <textarea class="inp" id="newDesc" rows="3" placeholder="What did you build? What did you learn?"></textarea>
           <div class="form-row">
             <input class="inp" id="newTag" placeholder="Tag (e.g. Python, Web)"/>
-            <input class="inp" id="newLink" placeholder="Project URL (optional)"/>
+          </div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--wine-light);letter-spacing:0.15em;text-transform:uppercase;margin-top:4px;margin-bottom:6px;">Links (optional)</div>
+          <div id="newLinksList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px;"></div>
+          <div style="display:flex;gap:8px;">
+            <input class="inp" id="newLinkLabel" placeholder="Label (e.g. GitHub, Live Demo)" style="flex:1;"/>
+            <input class="inp" id="newLinkUrl" placeholder="https://..." style="flex:1;"/>
+            <button type="button" class="btn btn-wine" id="addLinkToForm" style="font-size:9px;padding:8px 14px;white-space:nowrap;">+ Add</button>
           </div>
           <div>
             <button type="button" id="inProgressToggle" data-active="false"
@@ -1287,6 +1389,136 @@ function addSkill() {
 document.getElementById('addSkillBtn').addEventListener('click', addSkill);
 document.getElementById('newSkill').addEventListener('keydown', e => { if (e.key === 'Enter') addSkill(); });
 
+// ── FORM LINKS (for add project form)
+let formLinks = [];
+
+function renderFormLinks() {
+  const list = document.getElementById('newLinksList');
+  if (!list) return;
+  list.innerHTML = '';
+  formLinks.forEach((lnk, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;background:var(--charcoal3);border-radius:3px;padding:7px 12px;';
+    const label = document.createElement('span');
+    label.style.cssText = 'font-family:var(--mono);font-size:11px;color:#ffffff;flex:1;';
+    label.textContent = lnk.label || lnk.url;
+    const url = document.createElement('span');
+    url.style.cssText = 'font-family:var(--mono);font-size:10px;color:#888;flex:2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+    url.textContent = lnk.url;
+    const rm = document.createElement('button');
+    rm.type = 'button'; rm.textContent = '×';
+    rm.style.cssText = 'background:none;border:none;color:#666;font-size:16px;cursor:pointer;padding:0 4px;';
+    rm.addEventListener('click', () => { formLinks.splice(i,1); renderFormLinks(); });
+    row.appendChild(label); row.appendChild(url); row.appendChild(rm);
+    list.appendChild(row);
+  });
+}
+
+document.addEventListener('click', e => {
+  if (e.target.id === 'addLinkToForm') {
+    const label = document.getElementById('newLinkLabel').value.trim();
+    const url   = document.getElementById('newLinkUrl').value.trim();
+    if (!url) { document.getElementById('newLinkUrl').focus(); return; }
+    formLinks.push({ label: label || url, url });
+    document.getElementById('newLinkLabel').value = '';
+    document.getElementById('newLinkUrl').value = '';
+    document.getElementById('newLinkLabel').focus();
+    renderFormLinks();
+  }
+});
+
+document.getElementById('newLinkUrl').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('addLinkToForm').click();
+});
+
+// ── LINKS MODAL
+function openLinksModal(project, projectIndex) {
+  const overlay = document.createElement('div');
+  overlay.className = 'links-modal-overlay';
+  const box = document.createElement('div');
+  box.className = 'links-modal-box';
+
+  const title = document.createElement('p');
+  title.className = 'links-modal-title';
+  title.textContent = project.title;
+  box.appendChild(title);
+
+  const sub = document.createElement('p');
+  sub.className = 'links-modal-sub';
+  sub.textContent = 'Project Links';
+  box.appendChild(sub);
+
+  const list = document.createElement('div');
+  list.className = 'links-modal-list';
+
+  function refreshList() {
+    list.innerHTML = '';
+    const links = state.projects[projectIndex]?.links || [];
+    if (!links.length && !editMode) {
+      const empty = document.createElement('p');
+      empty.style.cssText = 'font-family:var(--mono);font-size:11px;color:#666;text-align:center;padding:16px 0;';
+      empty.textContent = 'No links added yet';
+      list.appendChild(empty);
+    }
+    links.forEach((lnk, li) => {
+      const item = document.createElement('a');
+      item.className = 'links-modal-item';
+      item.href = lnk.url; item.target = '_blank'; item.rel = 'noopener';
+      const icon = document.createElement('span'); icon.className = 'links-modal-item-icon'; icon.textContent = '🔗';
+      const lbl = document.createElement('span'); lbl.className = 'links-modal-item-label'; lbl.textContent = lnk.label || lnk.url;
+      const arrow = document.createElement('span'); arrow.className = 'links-modal-item-arrow'; arrow.textContent = '↗';
+      item.appendChild(icon); item.appendChild(lbl); item.appendChild(arrow);
+      if (editMode) {
+        const rm = document.createElement('button');
+        rm.className = 'links-modal-item-remove'; rm.textContent = '×'; rm.type = 'button';
+        rm.addEventListener('click', e => {
+          e.preventDefault(); e.stopPropagation();
+          state.projects[projectIndex].links.splice(li, 1);
+          persist(); renderProjects(); refreshList(); toast('Removed');
+        });
+        item.appendChild(rm);
+      }
+      list.appendChild(item);
+    });
+
+    if (editMode) {
+      const addRow = document.createElement('div');
+      addRow.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-top:8px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);';
+      const labelInp = document.createElement('input');
+      labelInp.className = 'inp'; labelInp.placeholder = 'Label (e.g. GitHub, Live Demo)'; labelInp.style.fontSize = '13px';
+      const urlInp = document.createElement('input');
+      urlInp.className = 'inp'; urlInp.placeholder = 'https://...'; urlInp.style.fontSize = '13px';
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button'; addBtn.className = 'btn btn-wine';
+      addBtn.style.cssText = 'font-size:9px;padding:8px;';
+      addBtn.textContent = '+ Add Link';
+      addBtn.addEventListener('click', () => {
+        const url = urlInp.value.trim();
+        if (!url) { urlInp.focus(); return; }
+        if (!state.projects[projectIndex].links) state.projects[projectIndex].links = [];
+        state.projects[projectIndex].links.push({ label: labelInp.value.trim() || url, url });
+        persist(); renderProjects(); labelInp.value = ''; urlInp.value = '';
+        refreshList(); toast('Link added ✓');
+      });
+      urlInp.addEventListener('keydown', e => { if (e.key === 'Enter') addBtn.click(); });
+      addRow.appendChild(labelInp); addRow.appendChild(urlInp); addRow.appendChild(addBtn);
+      list.appendChild(addRow);
+    }
+  }
+
+  refreshList();
+  box.appendChild(list);
+
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button'; closeBtn.className = 'links-modal-close';
+  closeBtn.textContent = 'Close';
+  closeBtn.addEventListener('click', () => overlay.remove());
+  box.appendChild(closeBtn);
+  overlay.appendChild(box);
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+
 // ══════════════════════════════
 // PROJECTS
 // ══════════════════════════════
@@ -1348,64 +1580,24 @@ function renderProjects() {
       topRow.appendChild(toggleBtn);
     }
 
-    // link button
-    if (p.link) {
-      const a = document.createElement('a');
-      a.className = 'project-link-btn';
-      a.href = p.link; a.target = '_blank'; a.rel = 'noopener';
-      a.innerHTML = '↗ View Project';
-      topRow.appendChild(a);
+    // links button — opens modal
+    const links = p.links || [];
+    if (links.length > 0) {
+      const viewBtn = document.createElement('button');
+      viewBtn.type = 'button'; viewBtn.className = 'btn btn-wine view-links-btn';
+      viewBtn.style.cssText = 'cursor:pointer;font-size:9px;padding:6px 14px;position:relative;overflow:hidden;background:linear-gradient(135deg, #6b1223 0%, #8c1a2e 50%, #6b1223 100%);border:1px solid rgba(176,42,66,0.6);letter-spacing:0.15em;box-shadow:0 2px 12px rgba(107,18,35,0.4), inset 0 1px 0 rgba(255,255,255,0.08);';
+      viewBtn.innerHTML = '🔗 View Links';
+      viewBtn.addEventListener('click', () => openLinksModal(p, i));
+      topRow.appendChild(viewBtn);
     }
 
-    if (p.link && editMode) {
-      const editLink = document.createElement('button');
-      editLink.type = 'button';
-      editLink.className = 'btn'; editLink.style.fontSize = '9px'; editLink.style.padding = '6px 12px';
-      editLink.textContent = '✎ Edit Link';
-      editLink.addEventListener('click', () => {
-        const newUrl = prompt('Project URL:', p.link || '');
-        if (newUrl !== null) { state.projects[i].link = newUrl.trim(); persist(); renderProjects(); toast(); }
-      });
-      topRow.appendChild(editLink);
-    }
-
-    if (!p.link && editMode) {
-      const addLink = document.createElement('button');
-      addLink.type = 'button';
-      addLink.className = 'btn'; addLink.style.fontSize = '9px'; addLink.style.padding = '6px 12px';
-      addLink.textContent = '+ Add Link';
-      addLink.addEventListener('click', () => {
-        const existingBox = card.querySelector('.inline-link-box');
-        if (existingBox) { existingBox.remove(); return; }
-        const box = document.createElement('div');
-        box.className = 'inline-link-box';
-        box.style.cssText = 'display:flex;gap:8px;margin-top:12px;width:100%;align-items:center;';
-        const inp = document.createElement('input');
-        inp.className = 'inp'; inp.placeholder = 'https://github.com/...';
-        inp.style.flex = '1'; inp.style.fontSize = '13px';
-        const saveBtn = document.createElement('button');
-        saveBtn.type = 'button'; saveBtn.className = 'btn btn-wine';
-        saveBtn.style.fontSize = '9px'; saveBtn.style.padding = '8px 16px'; saveBtn.style.whiteSpace = 'nowrap';
-        saveBtn.textContent = 'Save';
-        saveBtn.addEventListener('click', () => {
-          const val = inp.value.trim();
-          if (val) { state.projects[i].link = val; persist(); renderProjects(); toast('Link saved ✓'); }
-          else { box.remove(); }
-        });
-        const cancelBtn = document.createElement('button');
-        cancelBtn.type = 'button'; cancelBtn.className = 'btn';
-        cancelBtn.style.fontSize = '9px'; cancelBtn.style.padding = '8px 14px'; cancelBtn.style.whiteSpace = 'nowrap';
-        cancelBtn.textContent = 'Cancel';
-        cancelBtn.addEventListener('click', () => box.remove());
-        inp.addEventListener('keydown', e => {
-          if (e.key === 'Enter') saveBtn.click();
-          if (e.key === 'Escape') box.remove();
-        });
-        box.appendChild(inp); box.appendChild(saveBtn); box.appendChild(cancelBtn);
-        card.appendChild(box);
-        setTimeout(() => inp.focus(), 50);
-      });
-      topRow.appendChild(addLink);
+    if (editMode) {
+      const manageBtn = document.createElement('button');
+      manageBtn.type = 'button'; manageBtn.className = 'btn';
+      manageBtn.style.cssText = 'font-size:9px;padding:6px 12px;';
+      manageBtn.textContent = links.length > 0 ? '✎ Edit Links' : '+ Add Links';
+      manageBtn.addEventListener('click', () => openLinksModal(p, i));
+      topRow.appendChild(manageBtn);
     }
 
     if (p.video && editMode) {
@@ -1652,8 +1844,8 @@ function saveProject() {
       title,
       desc:       document.getElementById('newDesc').value.trim(),
       tag:        document.getElementById('newTag').value.trim(),
-      link:       document.getElementById('newLink').value.trim(),
       inProgress: document.getElementById('inProgressToggle').dataset.active === 'true',
+      links:      [...formLinks],
       video:      videoData || '',
       videoType:  videoType || 'url',
       id:         Date.now()
@@ -1679,7 +1871,8 @@ function saveProject() {
 }
 
 function clearForm() {
-  ['newTitle','newDesc','newTag','newLink','newVideo'].forEach(id => document.getElementById(id).value = '');
+  ['newTitle','newDesc','newTag','newLinkLabel','newLinkUrl','newVideo'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  formLinks = []; renderFormLinks();
   const ip = document.getElementById('inProgressToggle');
   if (ip) { ip.dataset.active = 'false'; ip.textContent = '+ Mark as In Progress'; ip.style.color = '#888'; ip.style.borderColor = 'rgba(255,160,0,0.35)'; }
   const fi = document.getElementById('newVideoFile');
@@ -1982,4 +2175,3 @@ if (isConfigured()) {
 </script>
 </body>
 </html>
- 
