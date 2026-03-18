@@ -40,13 +40,7 @@
   }
 
   /* grain texture overlay */
-  body::after {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 9998;
-    mix-blend-mode: overlay;
-  }
+  body::after { display: none; }
 
   body::before { display: none; }
 
@@ -839,10 +833,24 @@
     padding: 20px 24px;
     margin-bottom: 12px;
     position: relative;
-    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    transition: border-color 0.3s, transform 0.25s, box-shadow 0.3s, background 0.3s;
+    cursor: default;
   }
 
-  .course-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .course-card:hover {
+    border-color: var(--wine-light);
+    box-shadow: 0 0 16px rgba(176,42,66,0.5), 0 0 32px rgba(107,18,35,0.25), inset 0 0 20px rgba(107,18,35,0.08);
+  }
+
+  .course-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    border-radius: 6px 0 0 6px;
+    background: transparent;
+    transition: background 0.3s;
+  }
+
+  .course-card:hover::before { background: var(--wine-light); }
 
   .course-card-top {
     display: flex; align-items: flex-start;
@@ -898,8 +906,17 @@
 
   .course-bar-fill {
     height: 100%; border-radius: 20px;
-    transition: width 0.6s ease;
+    transition: width 0.6s ease, filter 0.3s;
   }
+
+  .course-card:hover .course-bar-fill { filter: brightness(1.3); }
+
+  .course-progress-status { transition: all 0.3s; }
+  .course-card:hover .course-progress-status.done { box-shadow: 0 0 10px rgba(80,230,120,0.3); }
+  .course-card:hover .course-progress-status.inprog { box-shadow: 0 0 10px rgba(255,160,0,0.3); }
+
+  .course-link-btn { transition: all 0.2s; }
+  .course-card:hover .course-link-btn { border-color: var(--wine-light); color: #ffffff; }
 
   .course-actions {
     display: flex; align-items: center; gap: 8px; margin-top: 12px;
@@ -1180,25 +1197,35 @@
         </div>
       </div>
 
-      <div id="courseList"></div>
-
-      <div class="empty-state" id="emptyCourses">
-        <p>No courses yet</p>
-        <small id="emptyCoursesHint">Check back soon</small>
-      </div>
-
-      <!-- Add course form -->
+      <!-- Add course form — shown ABOVE list when open -->
       <div class="add-form" id="addCourseForm">
         <span class="form-label">New Course</span>
         <div class="form-fields">
           <input class="inp" id="cTitle" placeholder="Course name (e.g. Python for Beginners)"/>
           <input class="inp" id="cPlatform" placeholder="Platform (e.g. YouTube, Coursera, Udemy)"/>
           <input class="inp" id="cLink" placeholder="Course URL (optional)"/>
-          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-            <span style="font-family:var(--mono);font-size:9px;color:var(--wine-light);letter-spacing:0.15em;text-transform:uppercase;">Progress:</span>
-            <div style="display:flex;align-items:center;gap:8px;flex:1;">
-              <input type="range" id="cProgress" min="0" max="100" value="0" style="flex:1;accent-color:var(--wine-light);cursor:pointer;"/>
-              <span id="cProgressVal" style="font-family:var(--mono);font-size:12px;color:#ffffff;min-width:36px;">0%</span>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--wine-light);letter-spacing:0.15em;text-transform:uppercase;margin-top:4px;margin-bottom:8px;">Duration</div>
+          <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <label style="font-family:var(--mono);font-size:9px;color:#888;letter-spacing:0.1em;text-transform:uppercase;">Total hrs</label>
+              <input class="inp" type="number" id="cTotalHours" placeholder="0" min="0" step="1" style="width:90px;"/>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <label style="font-family:var(--mono);font-size:9px;color:#888;letter-spacing:0.1em;text-transform:uppercase;">Total mins</label>
+              <input class="inp" type="number" id="cTotalMins" placeholder="0" min="0" max="59" step="1" style="width:90px;"/>
+            </div>
+            <div style="font-family:var(--mono);font-size:16px;color:#555;padding-bottom:10px;">→</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <label style="font-family:var(--mono);font-size:9px;color:#888;letter-spacing:0.1em;text-transform:uppercase;">Done hrs</label>
+              <input class="inp" type="number" id="cDoneHours" placeholder="0" min="0" step="1" style="width:90px;"/>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <label style="font-family:var(--mono);font-size:9px;color:#888;letter-spacing:0.1em;text-transform:uppercase;">Done mins</label>
+              <input class="inp" type="number" id="cDoneMins" placeholder="0" min="0" max="59" step="1" style="width:90px;"/>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:center;min-width:52px;">
+              <label style="font-family:var(--mono);font-size:9px;color:#888;letter-spacing:0.1em;text-transform:uppercase;">Auto %</label>
+              <span id="cAutoPercent" style="font-family:var(--mono);font-size:18px;color:var(--wine-light);font-weight:500;">0%</span>
             </div>
           </div>
         </div>
@@ -1206,6 +1233,13 @@
           <button class="btn btn-wine" id="saveCourse">Save</button>
           <button class="btn" id="cancelCourse">Cancel</button>
         </div>
+      </div>
+
+      <div id="courseList"></div>
+
+      <div class="empty-state" id="emptyCourses">
+        <p>No courses yet</p>
+        <small id="emptyCoursesHint">Check back soon</small>
       </div>
     </section>
 
@@ -1230,7 +1264,7 @@ const OWNER_PASSWORD = 'idkig';
 // 1. Go to https://jsonbin.io and sign up (free)
 // 2. Click "Create Bin", paste: {"name":"Abdul Muqheeth","tagline":"Student & Aspiring Developer","bio":"Hey! I'm Abdul Muqheeth. This is my personal space to track my growth, projects, and skills. Feel free to look around!","email":"","github":"","linkedin":"","categories":[],"skills":[],"projects":[]}
 // 3. Copy the Bin ID (looks like 64abc123...) and paste below
-// 4. Go to API Keys → Create Key → copy and paste belowconst BIN_ID  = '69b53fb1b7ec241ddc69a87f';
+// 4. Go to API Keys → Create Key → copy and paste below
 const BIN_ID  = '69b53fb1b7ec241ddc69a87f';
 const API_KEY = '$2a$10$moU9Qu81YEaM7K4Icd6LlOFkx4PhDXtRk5i7tSSeWJTyZFvkR.HwG';
 const BIN_URL = `https://api.jsonbin.io/v3/b/69b53fb1b7ec241ddc69a87f`;
@@ -2381,30 +2415,78 @@ function renderCourses() {
     // progress bar
     const pwrap = document.createElement('div'); pwrap.className = 'course-progress-wrap';
     const pheader = document.createElement('div'); pheader.className = 'course-progress-header';
-    const pctLabel = document.createElement('span'); pctLabel.className = 'course-progress-pct'; pctLabel.textContent = pct + '%';
-    pheader.appendChild(pctLabel);
+    const pctLabel = document.createElement('span'); pctLabel.className = 'course-progress-pct';
+    pctLabel.textContent = pct + '%';
+    const hoursInfo = document.createElement('span');
+    hoursInfo.style.cssText = 'font-family:var(--mono);font-size:10px;color:#888;';
+    if (c.totalMins) {
+      const dh = Math.floor((c.doneMins||0)/60), dm = (c.doneMins||0)%60;
+      const th = Math.floor(c.totalMins/60), tm = c.totalMins%60;
+      hoursInfo.textContent = dh + 'h ' + dm + 'm / ' + th + 'h ' + tm + 'm';
+    }
+    pheader.appendChild(pctLabel); pheader.appendChild(hoursInfo);
     const pbg = document.createElement('div'); pbg.className = 'course-bar-bg';
     const pfill = document.createElement('div'); pfill.className = 'course-bar-fill';
     pfill.style.width = pct + '%'; pfill.style.background = getBarColor(pct);
     pbg.appendChild(pfill); pwrap.appendChild(pheader); pwrap.appendChild(pbg);
     card.appendChild(pwrap);
 
-    // edit progress slider
+    // edit duration (edit mode only)
     const editProg = document.createElement('div'); editProg.className = 'course-edit-progress';
-    const slider = document.createElement('input');
-    slider.type = 'range'; slider.min = 0; slider.max = 100; slider.value = pct;
-    slider.style.cssText = 'flex:1;accent-color:var(--wine-light);cursor:pointer;';
-    const sliderVal = document.createElement('span');
-    sliderVal.style.cssText = 'font-family:var(--mono);font-size:11px;color:#ffffff;min-width:36px;';
-    sliderVal.textContent = pct + '%';
-    slider.addEventListener('input', () => {
-      const v = parseInt(slider.value);
-      sliderVal.textContent = v + '%'; pctLabel.textContent = v + '%';
-      pfill.style.width = v + '%'; pfill.style.background = getBarColor(v);
-      const ns = getStatus(v); statusBadge.className = 'course-progress-status ' + ns.cls; statusBadge.textContent = ns.label;
-    });
-    slider.addEventListener('change', () => { state.courses[i].progress = parseInt(slider.value); persist(); toast(); });
-    editProg.appendChild(slider); editProg.appendChild(sliderVal);
+    editProg.style.cssText = 'display:none;flex-direction:column;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);';
+    if (editMode) editProg.style.display = 'flex';
+
+    const durationRow = document.createElement('div');
+    durationRow.style.cssText = 'display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;';
+
+    function makeCardField(labelTxt, val, w) {
+      const wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+      const lbl = document.createElement('label'); lbl.style.cssText = 'font-family:var(--mono);font-size:9px;color:#888;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap;';
+      lbl.textContent = labelTxt;
+      const inp = document.createElement('input'); inp.className = 'inp'; inp.type = 'number'; inp.min = '0'; inp.step = '1';
+      inp.value = val || ''; inp.placeholder = '0'; inp.style.cssText = 'width:' + w + ';font-size:13px;';
+      wrap.appendChild(lbl); wrap.appendChild(inp);
+      return { wrap, inp };
+    }
+
+    const prevTH = Math.floor((c.totalMins||0) / 60);
+    const prevTM = (c.totalMins||0) % 60;
+    const prevDH = Math.floor((c.doneMins||0) / 60);
+    const prevDM = (c.doneMins||0) % 60;
+
+    const fTH = makeCardField('Total hrs',  prevTH||'', '72px');
+    const fTM = makeCardField('Total mins', prevTM||'', '72px');
+    const sep = document.createElement('span'); sep.textContent = '→'; sep.style.cssText = 'font-family:var(--mono);font-size:14px;color:#555;padding-bottom:10px;';
+    const fDH = makeCardField('Done hrs',   prevDH||'', '72px');
+    const fDM = makeCardField('Done mins',  prevDM||'', '72px');
+
+    const autoWrap = document.createElement('div'); autoWrap.style.cssText = 'display:flex;flex-direction:column;gap:4px;align-items:center;min-width:48px;';
+    const autoLbl = document.createElement('label'); autoLbl.style.cssText = 'font-family:var(--mono);font-size:9px;color:#888;letter-spacing:0.1em;text-transform:uppercase;'; autoLbl.textContent = 'Auto %';
+    const autoVal = document.createElement('span'); autoVal.style.cssText = 'font-family:var(--mono);font-size:18px;color:var(--wine-light);font-weight:500;'; autoVal.textContent = pct + '%';
+    autoWrap.appendChild(autoLbl); autoWrap.appendChild(autoVal);
+
+    function updateFromHours() {
+      const t = (parseFloat(fTH.inp.value)||0)*60 + (parseFloat(fTM.inp.value)||0);
+      const d = (parseFloat(fDH.inp.value)||0)*60 + (parseFloat(fDM.inp.value)||0);
+      const newPct = t > 0 ? Math.min(100, Math.round((d/t)*100)) : 0;
+      autoVal.textContent = newPct + '%';
+      autoVal.style.color = newPct===100 ? '#4de880' : newPct>=50 ? '#ffaa1e' : 'var(--wine-light)';
+      pfill.style.width = newPct + '%'; pfill.style.background = getBarColor(newPct);
+      pctLabel.textContent = newPct + '%';
+      if (hoursInfo) {
+        const th = Math.floor(t/60), tm = t%60, dh = Math.floor(d/60), dm = d%60;
+        hoursInfo.textContent = dh + 'h ' + dm + 'm / ' + th + 'h ' + tm + 'm';
+      }
+      const ns = getStatus(newPct); statusBadge.className = 'course-progress-status ' + ns.cls; statusBadge.textContent = ns.label;
+      state.courses[i].progress = newPct; state.courses[i].totalMins = t; state.courses[i].doneMins = d;
+      persist(); toast();
+    }
+
+    [fTH.inp, fTM.inp, fDH.inp, fDM.inp].forEach(inp => inp.addEventListener('change', updateFromHours));
+
+    durationRow.appendChild(fTH.wrap); durationRow.appendChild(fTM.wrap); durationRow.appendChild(sep);
+    durationRow.appendChild(fDH.wrap); durationRow.appendChild(fDM.wrap); durationRow.appendChild(autoWrap);
+    editProg.appendChild(durationRow);
     card.appendChild(editProg);
 
     if (c.link) {
@@ -2428,8 +2510,24 @@ document.getElementById('cancelCourse').addEventListener('click', () => {
   clearCourseForm();
 });
 
-document.getElementById('cProgress').addEventListener('input', () => {
-  document.getElementById('cProgressVal').textContent = document.getElementById('cProgress').value + '%';
+// auto-calculate % when hours/mins change
+function recalcPercent() {
+  const totalH = parseFloat(document.getElementById('cTotalHours').value) || 0;
+  const totalM = parseFloat(document.getElementById('cTotalMins').value)  || 0;
+  const doneH  = parseFloat(document.getElementById('cDoneHours').value)  || 0;
+  const doneM  = parseFloat(document.getElementById('cDoneMins').value)   || 0;
+  const totalMins = totalH * 60 + totalM;
+  const doneMins  = doneH  * 60 + doneM;
+  const pct = totalMins > 0 ? Math.min(100, Math.round((doneMins / totalMins) * 100)) : 0;
+  const el = document.getElementById('cAutoPercent');
+  el.textContent = pct + '%';
+  el.style.color = pct === 100 ? '#4de880' : pct >= 50 ? '#ffaa1e' : 'var(--wine-light)';
+  return { pct, totalMins, doneMins };
+}
+
+['cTotalHours','cTotalMins','cDoneHours','cDoneMins'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', recalcPercent);
 });
 
 document.getElementById('saveCourse').addEventListener('click', saveCourse);
@@ -2438,11 +2536,14 @@ document.getElementById('cTitle').addEventListener('keydown', e => { if (e.key =
 function saveCourse() {
   const title = document.getElementById('cTitle').value.trim();
   if (!title) { document.getElementById('cTitle').focus(); return; }
+  const { pct, totalMins, doneMins } = recalcPercent();
   if (!state.courses) state.courses = [];
   state.courses.push({
-    title, platform: document.getElementById('cPlatform').value.trim(),
-    link: document.getElementById('cLink').value.trim(),
-    progress: parseInt(document.getElementById('cProgress').value), id: Date.now()
+    title,
+    platform:  document.getElementById('cPlatform').value.trim(),
+    link:      document.getElementById('cLink').value.trim(),
+    totalMins, doneMins, progress: pct,
+    id: Date.now()
   });
   persist(); renderCourses();
   document.getElementById('addCourseForm').classList.remove('open');
@@ -2450,9 +2551,9 @@ function saveCourse() {
 }
 
 function clearCourseForm() {
-  ['cTitle','cPlatform','cLink'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('cProgress').value = 0;
-  document.getElementById('cProgressVal').textContent = '0%';
+  ['cTitle','cPlatform','cLink','cTotalHours','cTotalMins','cDoneHours','cDoneMins'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  const ap = document.getElementById('cAutoPercent');
+  if (ap) { ap.textContent = '0%'; ap.style.color = 'var(--wine-light)'; }
 }
 
 // ── BOOT — called after cloud data loads
