@@ -831,6 +831,106 @@
 
   .links-modal-close:hover { border-color: #fff; color: #fff; }
 
+  /* ── COURSES ── */
+  .course-card {
+    background: var(--charcoal2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+
+  .course-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+
+  .course-card-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 12px; margin-bottom: 14px;
+  }
+
+  .course-title {
+    font-family: var(--serif); font-size: 19px; font-weight: 400;
+    color: #ffffff; display: block; flex: 1;
+  }
+
+  .course-platform {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--wine-light);
+    margin-bottom: 12px; display: block;
+  }
+
+  .course-progress-wrap { margin-bottom: 6px; }
+
+  .course-progress-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .course-progress-pct {
+    font-family: var(--mono); font-size: 11px; color: #ffffff;
+  }
+
+  .course-progress-status {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 20px;
+  }
+
+  .course-progress-status.done {
+    background: rgba(80,230,120,0.12); border: 1px solid rgba(80,230,120,0.4);
+    color: #4de880;
+  }
+
+  .course-progress-status.inprog {
+    background: rgba(255,160,0,0.1); border: 1px solid rgba(255,160,0,0.35);
+    color: #ffaa1e;
+  }
+
+  .course-progress-status.notstarted {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: #888;
+  }
+
+  .course-bar-bg {
+    background: var(--charcoal3); border-radius: 20px;
+    height: 6px; overflow: hidden;
+  }
+
+  .course-bar-fill {
+    height: 100%; border-radius: 20px;
+    transition: width 0.6s ease;
+  }
+
+  .course-actions {
+    display: flex; align-items: center; gap: 8px; margin-top: 12px;
+  }
+
+  .course-link-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--wine-light);
+    text-decoration: none; border: 1px solid rgba(176,42,66,0.3);
+    border-radius: 2px; padding: 4px 12px; transition: all 0.2s;
+  }
+
+  .course-link-btn:hover { background: var(--wine-soft); border-color: var(--wine-light); color: #ffffff; }
+
+  .course-remove {
+    position: absolute; top: 12px; right: 14px;
+    background: none; border: none; cursor: pointer;
+    color: #444; font-size: 18px; transition: color 0.2s;
+    display: none; padding: 2px 6px;
+  }
+
+  body.edit-mode .course-remove { display: block; }
+  .course-remove:hover { color: var(--wine-light); }
+
+  .course-edit-progress {
+    display: none; align-items: center; gap: 10px; margin-top: 10px;
+  }
+
+  body.edit-mode .course-edit-progress { display: flex; }
+
   /* ── TOAST ── */
   .toast {
     position: fixed; bottom: 28px; right: 28px;
@@ -925,6 +1025,7 @@
           <button class="nav-btn active" data-section="about">About</button>
           <button class="nav-btn" data-section="projects">Projects</button>
           <button class="nav-btn" data-section="skills">Skills</button>
+          <button class="nav-btn" data-section="courses">Courses</button>
         </nav>
       </div>
     </div>
@@ -1061,6 +1162,53 @@
       </div>
     </section>
 
+    <!-- COURSES -->
+    <section id="courses" class="section">
+      <div class="section-header">
+        <h2 class="section-title">Courses</h2>
+        <button class="btn btn-wine" id="openAddCourse" style="display:none;">+ Add Course</button>
+      </div>
+
+      <!-- overall progress bar -->
+      <div id="courseProgressWrap" style="margin-bottom:36px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-family:var(--mono);font-size:9px;color:#888;letter-spacing:0.15em;text-transform:uppercase;">Overall Progress</span>
+          <span id="courseProgressLabel" style="font-family:var(--mono);font-size:11px;color:#ffffff;">0 / 0 completed</span>
+        </div>
+        <div style="background:var(--charcoal3);border-radius:20px;height:8px;overflow:hidden;">
+          <div id="courseProgressBar" style="height:100%;width:0%;border-radius:20px;background:linear-gradient(90deg,var(--wine),var(--wine-light));transition:width 0.6s ease;"></div>
+        </div>
+      </div>
+
+      <div id="courseList"></div>
+
+      <div class="empty-state" id="emptyCourses">
+        <p>No courses yet</p>
+        <small id="emptyCoursesHint">Check back soon</small>
+      </div>
+
+      <!-- Add course form -->
+      <div class="add-form" id="addCourseForm">
+        <span class="form-label">New Course</span>
+        <div class="form-fields">
+          <input class="inp" id="cTitle" placeholder="Course name (e.g. Python for Beginners)"/>
+          <input class="inp" id="cPlatform" placeholder="Platform (e.g. YouTube, Coursera, Udemy)"/>
+          <input class="inp" id="cLink" placeholder="Course URL (optional)"/>
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+            <span style="font-family:var(--mono);font-size:9px;color:var(--wine-light);letter-spacing:0.15em;text-transform:uppercase;">Progress:</span>
+            <div style="display:flex;align-items:center;gap:8px;flex:1;">
+              <input type="range" id="cProgress" min="0" max="100" value="0" style="flex:1;accent-color:var(--wine-light);cursor:pointer;"/>
+              <span id="cProgressVal" style="font-family:var(--mono);font-size:12px;color:#ffffff;min-width:36px;">0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-wine" id="saveCourse">Save</button>
+          <button class="btn" id="cancelCourse">Cancel</button>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer>
@@ -1082,7 +1230,7 @@ const OWNER_PASSWORD = 'idkig';
 // 1. Go to https://jsonbin.io and sign up (free)
 // 2. Click "Create Bin", paste: {"name":"Abdul Muqheeth","tagline":"Student & Aspiring Developer","bio":"Hey! I'm Abdul Muqheeth. This is my personal space to track my growth, projects, and skills. Feel free to look around!","email":"","github":"","linkedin":"","categories":[],"skills":[],"projects":[]}
 // 3. Copy the Bin ID (looks like 64abc123...) and paste below
-// 4. Go to API Keys → Create Key → copy and paste below
+// 4. Go to API Keys → Create Key → copy and paste belowconst BIN_ID  = '69b53fb1b7ec241ddc69a87f';
 const BIN_ID  = '69b53fb1b7ec241ddc69a87f';
 const API_KEY = '$2a$10$moU9Qu81YEaM7K4Icd6LlOFkx4PhDXtRk5i7tSSeWJTyZFvkR.HwG';
 const BIN_URL = `https://api.jsonbin.io/v3/b/69b53fb1b7ec241ddc69a87f`;
@@ -1096,7 +1244,8 @@ const DEFAULTS = {
   linkedin: '',
   categories: [],
   skills:   [],
-  projects: []
+  projects: [],
+  courses:  []
 };
 
 let state = Object.assign({}, DEFAULTS);
@@ -1184,6 +1333,7 @@ function enterEditMode() {
   updateContactVisibility();
   renderSkills();
   renderProjects();
+  renderCourses();
   toast('Edit mode on ✓');
 }
 
@@ -1197,6 +1347,7 @@ function exitEditMode() {
   updateContactVisibility();
   renderSkills();
   renderProjects();
+  renderCourses();
   toast('Edit mode off');
 }
 
@@ -2154,6 +2305,156 @@ document.addEventListener('input', e => {
   }
 });
 
+// ── COURSES ─────────────────────────────────────────────────────────
+
+function getBarColor(pct) {
+  if (pct === 100) return 'linear-gradient(90deg, #2a8a4a, #4de880)';
+  if (pct >= 50)   return 'linear-gradient(90deg, var(--wine), #ffaa1e)';
+  return 'linear-gradient(90deg, var(--wine-deep), var(--wine-light))';
+}
+
+function getStatus(pct) {
+  if (pct === 100) return { label: '✓ Completed', cls: 'done' };
+  if (pct > 0)     return { label: 'In Progress',  cls: 'inprog' };
+  return { label: 'Not Started', cls: 'notstarted' };
+}
+
+function renderCourses() {
+  const list = document.getElementById('courseList');
+  const empty = document.getElementById('emptyCourses');
+  const progressBar = document.getElementById('courseProgressBar');
+  const progressLabel = document.getElementById('courseProgressLabel');
+  const addBtn = document.getElementById('openAddCourse');
+  if (!list) return;
+  list.innerHTML = '';
+  if (addBtn) addBtn.style.display = editMode ? 'inline-flex' : 'none';
+  document.getElementById('emptyCoursesHint').textContent = editMode ? 'Hit "+ Add Course" to get started' : 'Check back soon';
+  const courses = state.courses || [];
+
+  if (courses.length) {
+    const done = courses.filter(c => c.progress === 100).length;
+    const avg  = Math.round(courses.reduce((s,c) => s + (c.progress||0), 0) / courses.length);
+    progressBar.style.width = avg + '%';
+    progressLabel.textContent = done + ' / ' + courses.length + ' completed';
+    document.getElementById('courseProgressWrap').style.display = 'block';
+  } else {
+    document.getElementById('courseProgressWrap').style.display = 'none';
+  }
+
+  if (!courses.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  courses.forEach((c, i) => {
+    const pct    = c.progress || 0;
+    const status = getStatus(pct);
+    const card   = document.createElement('div');
+    card.className = 'course-card';
+
+    const rm = document.createElement('button');
+    rm.className = 'course-remove'; rm.textContent = '×';
+    rm.addEventListener('click', () => { state.courses.splice(i,1); persist(); renderCourses(); toast('Removed'); });
+    card.appendChild(rm);
+
+    if (c.platform) {
+      const plat = document.createElement('span');
+      plat.className = 'course-platform';
+      plat.contentEditable = editMode ? 'true' : 'false';
+      plat.textContent = c.platform;
+      plat.addEventListener('blur', () => { if (!editMode) return; state.courses[i].platform = plat.textContent.trim(); persist(); toast(); });
+      card.appendChild(plat);
+    }
+
+    const topRow = document.createElement('div');
+    topRow.className = 'course-card-top';
+    const titleEl = document.createElement('span');
+    titleEl.className = 'course-title';
+    titleEl.contentEditable = editMode ? 'true' : 'false';
+    titleEl.textContent = c.title;
+    titleEl.addEventListener('blur', () => { if (!editMode) return; state.courses[i].title = titleEl.textContent.trim(); persist(); toast(); });
+    titleEl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); } });
+    const statusBadge = document.createElement('span');
+    statusBadge.className = 'course-progress-status ' + status.cls;
+    statusBadge.textContent = status.label;
+    topRow.appendChild(titleEl); topRow.appendChild(statusBadge);
+    card.appendChild(topRow);
+
+    // progress bar
+    const pwrap = document.createElement('div'); pwrap.className = 'course-progress-wrap';
+    const pheader = document.createElement('div'); pheader.className = 'course-progress-header';
+    const pctLabel = document.createElement('span'); pctLabel.className = 'course-progress-pct'; pctLabel.textContent = pct + '%';
+    pheader.appendChild(pctLabel);
+    const pbg = document.createElement('div'); pbg.className = 'course-bar-bg';
+    const pfill = document.createElement('div'); pfill.className = 'course-bar-fill';
+    pfill.style.width = pct + '%'; pfill.style.background = getBarColor(pct);
+    pbg.appendChild(pfill); pwrap.appendChild(pheader); pwrap.appendChild(pbg);
+    card.appendChild(pwrap);
+
+    // edit progress slider
+    const editProg = document.createElement('div'); editProg.className = 'course-edit-progress';
+    const slider = document.createElement('input');
+    slider.type = 'range'; slider.min = 0; slider.max = 100; slider.value = pct;
+    slider.style.cssText = 'flex:1;accent-color:var(--wine-light);cursor:pointer;';
+    const sliderVal = document.createElement('span');
+    sliderVal.style.cssText = 'font-family:var(--mono);font-size:11px;color:#ffffff;min-width:36px;';
+    sliderVal.textContent = pct + '%';
+    slider.addEventListener('input', () => {
+      const v = parseInt(slider.value);
+      sliderVal.textContent = v + '%'; pctLabel.textContent = v + '%';
+      pfill.style.width = v + '%'; pfill.style.background = getBarColor(v);
+      const ns = getStatus(v); statusBadge.className = 'course-progress-status ' + ns.cls; statusBadge.textContent = ns.label;
+    });
+    slider.addEventListener('change', () => { state.courses[i].progress = parseInt(slider.value); persist(); toast(); });
+    editProg.appendChild(slider); editProg.appendChild(sliderVal);
+    card.appendChild(editProg);
+
+    if (c.link) {
+      const actions = document.createElement('div'); actions.className = 'course-actions';
+      const a = document.createElement('a'); a.className = 'course-link-btn';
+      a.href = c.link; a.target = '_blank'; a.rel = 'noopener'; a.textContent = '↗ Go to Course';
+      actions.appendChild(a); card.appendChild(actions);
+    }
+
+    list.appendChild(card);
+  });
+}
+
+document.getElementById('openAddCourse').addEventListener('click', () => {
+  document.getElementById('addCourseForm').classList.add('open');
+  document.getElementById('cTitle').focus();
+});
+
+document.getElementById('cancelCourse').addEventListener('click', () => {
+  document.getElementById('addCourseForm').classList.remove('open');
+  clearCourseForm();
+});
+
+document.getElementById('cProgress').addEventListener('input', () => {
+  document.getElementById('cProgressVal').textContent = document.getElementById('cProgress').value + '%';
+});
+
+document.getElementById('saveCourse').addEventListener('click', saveCourse);
+document.getElementById('cTitle').addEventListener('keydown', e => { if (e.key === 'Enter') saveCourse(); });
+
+function saveCourse() {
+  const title = document.getElementById('cTitle').value.trim();
+  if (!title) { document.getElementById('cTitle').focus(); return; }
+  if (!state.courses) state.courses = [];
+  state.courses.push({
+    title, platform: document.getElementById('cPlatform').value.trim(),
+    link: document.getElementById('cLink').value.trim(),
+    progress: parseInt(document.getElementById('cProgress').value), id: Date.now()
+  });
+  persist(); renderCourses();
+  document.getElementById('addCourseForm').classList.remove('open');
+  clearCourseForm(); toast('Course added ✓');
+}
+
+function clearCourseForm() {
+  ['cTitle','cPlatform','cLink'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('cProgress').value = 0;
+  document.getElementById('cProgressVal').textContent = '0%';
+}
+
 // ── BOOT — called after cloud data loads
 function boot() {
   syncFooter();
@@ -2161,6 +2462,7 @@ function boot() {
   updateContactVisibility();
   renderSkills();
   renderProjects();
+  renderCourses();
 }
 
 // ── START
