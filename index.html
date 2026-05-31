@@ -1012,7 +1012,10 @@
 </head>
 <body>
 
-<div id="editBanner">✎ &nbsp; Edit Mode — only you can see this</div>
+<div id="editBanner" style="display:flex;align-items:center;justify-content:center;gap:16px;">
+  <span>✎ &nbsp; Edit Mode — only you can see this</span>
+  <button id="migrateBtn" onclick="migrateToFirebase()" style="font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:4px 12px;border-radius:20px;cursor:pointer;">⬆ Push local data to cloud</button>
+</div>
 <button id="lockBtn" title="Owner login">🔒</button>
 
 <div class="modal-overlay" id="modal" style="display:none;">
@@ -2554,6 +2557,26 @@ function boot() {
   renderSkills();
   renderProjects();
   renderCourses();
+}
+
+// ── MIGRATE local data to Firebase
+async function migrateToFirebase() {
+  const btn = document.getElementById('migrateBtn');
+  const cached = localStorage.getItem('amq_cache');
+  if (!cached) { toast('No local data found!'); return; }
+  btn.textContent = '⏳ Pushing...';
+  btn.disabled = true;
+  try {
+    await setDoc(DOC_REF, JSON.parse(cached));
+    btn.textContent = '✓ Done!';
+    toast('✓ All data pushed to cloud!');
+    setTimeout(() => { btn.textContent = '⬆ Push local data to cloud'; btn.disabled = false; }, 3000);
+  } catch(e) {
+    btn.textContent = '✗ Failed';
+    btn.disabled = false;
+    toast('⚠ Migration failed — check console');
+    console.error(e);
+  }
 }
 
 // ── START
