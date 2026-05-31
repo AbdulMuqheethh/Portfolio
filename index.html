@@ -1330,7 +1330,9 @@ async function loadFromCloud() {
 async function persist() {
   localStorage.setItem('amq_cache', JSON.stringify(state));
   try {
-    await setDoc(DOC_REF, state);
+    // JSON round-trip strips any invalid nested types Firestore can't handle
+    const clean = JSON.parse(JSON.stringify(state));
+    await setDoc(DOC_REF, clean);
     console.log('✓ Saved to Firebase');
   } catch (e) {
     console.warn('Firebase save failed:', e);
@@ -2573,7 +2575,8 @@ async function migrateToFirebase() {
   btn.disabled = true;
   try {
     // use current in-memory state directly
-    await setDoc(DOC_REF, state);
+    const clean = JSON.parse(JSON.stringify(state));
+    await setDoc(DOC_REF, clean);
     btn.textContent = '✓ Done!';
     toast('✓ All data pushed to cloud!');
     console.log('✓ Migration successful', state);
