@@ -17,7 +17,6 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT') {
-    // parse body manually — Vercel doesn't auto-parse
     let body = '';
     await new Promise((resolve, reject) => {
       req.on('data', chunk => { body += chunk; });
