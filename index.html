@@ -1014,7 +1014,7 @@
 
 <div id="editBanner" style="display:flex;align-items:center;justify-content:center;gap:16px;">
   <span>✎ &nbsp; Edit Mode — only you can see this</span>
-  <button id="migrateBtn" onclick="migrateToFirebase()" style="font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:4px 12px;border-radius:20px;cursor:pointer;">⬆ Push local data to cloud</button>
+  <button id="migrateBtn" style="font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:4px 12px;border-radius:20px;cursor:pointer;">⬆ Push local data to cloud</button>
 </div>
 <button id="lockBtn" title="Owner login">🔒</button>
 
@@ -2559,6 +2559,13 @@ function boot() {
   renderCourses();
 }
 
+// ── expose functions needed by inline onclick handlers (module scope fix)
+window.switchVidTab = function(tab) {
+  document.querySelectorAll('.vid-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.getElementById('vidTabUrl').style.display  = tab === 'url'  ? 'block' : 'none';
+  document.getElementById('vidTabFile').style.display = tab === 'file' ? 'block' : 'none';
+};
+
 // ── MIGRATE local data to Firebase
 async function migrateToFirebase() {
   const btn = document.getElementById('migrateBtn');
@@ -2580,6 +2587,10 @@ async function migrateToFirebase() {
 }
 
 // ── START
+document.addEventListener('DOMContentLoaded', () => {
+  const migrateBtn = document.getElementById('migrateBtn');
+  if (migrateBtn) migrateBtn.addEventListener('click', migrateToFirebase);
+});
 loadFromCloud();
 </script>
 </body>
