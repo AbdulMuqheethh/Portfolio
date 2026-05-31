@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const BIN_ID  = '69b53fb1b7ec241ddc69a87f';
-  const API_KEY = '$2a$10$moU9Qu81YEaM7K4Icd6LlOFkx4PhDXtRk5i7tSSeWJTyZFvkR.HwG';
+  const API_KEY = '$2a$10$B2S4vagr6nkRLFDiDeZp4.2fCAmRD5.D9GoUfxYwlm1Vxb9eJ/cX2';
 
   if (req.method === 'GET') {
     const r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
