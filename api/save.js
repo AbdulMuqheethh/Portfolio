@@ -1,3 +1,5 @@
+export const config = { api: { bodyParser: true } };
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS');
@@ -17,13 +19,6 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT') {
-    let body = '';
-    await new Promise((resolve, reject) => {
-      req.on('data', chunk => { body += chunk; });
-      req.on('end', resolve);
-      req.on('error', reject);
-    });
-
     const r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: 'PUT',
       headers: {
@@ -31,7 +26,7 @@ export default async function handler(req, res) {
         'X-Master-Key': API_KEY,
         'X-Bin-Meta': 'false'
       },
-      body: body
+      body: JSON.stringify(req.body)
     });
     const data = await r.json();
     return res.status(r.status).json(data);
