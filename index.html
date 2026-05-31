@@ -1290,23 +1290,14 @@ let editMode = false;
 async function loadFromCloud() {
   document.getElementById('f-name').textContent = 'Loading...';
   try {
-    const res = await fetch(BIN_URL + '/latest', {
-      headers: {
-        'X-Master-Key': API_KEY,
-        'X-Bin-Meta': 'false'
-      }
-    });
+    const res = await fetch('/api/save');
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    // JSONBin wraps data in .record
-    const data = json.record || json;
+    const data = await res.json();
     state = Object.assign({}, DEFAULTS, data);
-    // cache locally so page still works if JSONBin is slow
     localStorage.setItem('amq_cache', JSON.stringify(state));
     console.log('✓ Loaded from cloud');
   } catch (e) {
     console.warn('Cloud load failed:', e);
-    // try local cache
     try {
       const cached = localStorage.getItem('amq_cache');
       if (cached) {
@@ -1322,28 +1313,23 @@ async function loadFromCloud() {
 
 // ── SAVE to JSONBin + update local cache
 async function persist() {
-  // update local cache immediately so UI feels instant
   localStorage.setItem('amq_cache', JSON.stringify(state));
   try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    const res = await fetch('/api/save', {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': API_KEY,
-        'X-Bin-Meta': 'false'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(state)
     });
     if (!res.ok) {
       const errText = await res.text();
-      console.error('JSONBin save failed:', res.status, errText);
-      toast('⚠ Cloud save failed (' + res.status + ') — check console');
+      console.error('Save failed:', res.status, errText);
+      toast('\u26a0 Cloud save failed — check console');
       return;
     }
-    console.log('✓ Cloud saved successfully');
+    console.log('\u2713 Cloud saved successfully');
   } catch (e) {
     console.warn('Cloud save failed:', e);
-    toast('⚠ Cloud save failed — saved locally only');
+    toast('\u26a0 Cloud save failed — saved locally only');
   }
 }
 
