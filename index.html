@@ -1258,17 +1258,25 @@
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script type="module">
 const OWNER_PASSWORD = 'idkig';
 
-// ── JSONBIN CONFIG
-// 1. Go to https://jsonbin.io and sign up (free)
-// 2. Click "Create Bin", paste: {"name":"Abdul Muqheeth","tagline":"Student & Aspiring Developer","bio":"Hey! I'm Abdul Muqheeth. This is my personal space to track my growth, projects, and skills. Feel free to look around!","email":"","github":"","linkedin":"","categories":[],"skills":[],"projects":[]}
-// 3. Copy the Bin ID (looks like 64abc123...) and paste below
-// 4. Go to API Keys → Create Key → copy and paste below
-const BIN_ID  = '69b53fb1b7ec241ddc69a87f';
-const API_KEY = '$2a$10$moU9Qu81YEaM7K4Icd6LlOFkx4PhDXtRk5i7tSSeWJTyZFvkR.HwG';
-const BIN_URL = `https://api.jsonbin.io/v3/b/69b53fb1b7ec241ddc69a87f`;
+// ── FIREBASE CONFIG
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD_GjwxEJduujRnXPl4Zp2plhLqr4u6DUs",
+  authDomain: "portfolioo-ed0dd.firebaseapp.com",
+  projectId: "portfolioo-ed0dd",
+  storageBucket: "portfolioo-ed0dd.firebasestorage.app",
+  messagingSenderId: "337671865159",
+  appId: "1:337671865159:web:61bc73d505d057b5f44262"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+const DOC_REF = doc(db, 'portfolio', 'data');
 
 const DEFAULTS = {
   name:     'Abdul Muqheeth',
@@ -1286,18 +1294,22 @@ const DEFAULTS = {
 let state = Object.assign({}, DEFAULTS);
 let editMode = false;
 
-// ── LOAD from JSONBin with localStorage cache as fallback
+// ── LOAD from Firebase
 async function loadFromCloud() {
   document.getElementById('f-name').textContent = 'Loading...';
   try {
-    const res = await fetch('/api/save');
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    state = Object.assign({}, DEFAULTS, data);
-    localStorage.setItem('amq_cache', JSON.stringify(state));
-    console.log('✓ Loaded from cloud');
+    const snap = await getDoc(DOC_REF);
+    if (snap.exists()) {
+      state = Object.assign({}, DEFAULTS, snap.data());
+      localStorage.setItem('amq_cache', JSON.stringify(state));
+      console.log('✓ Loaded from Firebase');
+    } else {
+      // first time — no data yet, use defaults
+      state = Object.assign({}, DEFAULTS);
+      console.log('✓ No cloud data yet, using defaults');
+    }
   } catch (e) {
-    console.warn('Cloud load failed:', e);
+    console.warn('Firebase load failed:', e);
     try {
       const cached = localStorage.getItem('amq_cache');
       if (cached) {
@@ -1311,32 +1323,19 @@ async function loadFromCloud() {
   boot();
 }
 
-// ── SAVE to JSONBin + update local cache
+// ── SAVE to Firebase
 async function persist() {
   localStorage.setItem('amq_cache', JSON.stringify(state));
   try {
-    const res = await fetch('/api/save', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state)
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error('Save failed:', res.status, errText);
-      toast('\u26a0 Cloud save failed — check console');
-      return;
-    }
-    console.log('\u2713 Cloud saved successfully');
+    await setDoc(DOC_REF, state);
+    console.log('✓ Saved to Firebase');
   } catch (e) {
-    console.warn('Cloud save failed:', e);
-    toast('\u26a0 Cloud save failed — saved locally only');
+    console.warn('Firebase save failed:', e);
+    toast('⚠ Cloud save failed — saved locally only');
   }
 }
 
-// Check if JSONBin is configured
-function isConfigured() {
-  return BIN_ID !== 'PASTE_YOUR_BIN_ID_HERE' && API_KEY !== 'PASTE_YOUR_API_KEY_HERE';
-}
+
 
 // ── TOAST
 let toastTimer;
@@ -1355,9 +1354,6 @@ function enterEditMode() {
   document.getElementById('lockBtn').textContent = '🔓';
   document.getElementById('lockBtn').title = 'Exit edit mode';
   document.getElementById('emptyHint').textContent = "Hit \"+ Add Project\" whenever you're ready";
-  if (!isConfigured()) {
-    toast('⚠ JSONBin not set up — changes won\'t be global yet!');
-  }
   updateContactVisibility();
   renderSkills();
   renderProjects();
@@ -2561,14 +2557,7 @@ function boot() {
 }
 
 // ── START
-if (isConfigured()) {
-  loadFromCloud();
-} else {
-  // JSONBin not set up yet — show a setup reminder in edit mode only
-  state = Object.assign({}, DEFAULTS);
-  boot();
-  console.warn('JSONBin not configured. Add your BIN_ID and API_KEY to make edits global.');
-}
+loadFromCloud();
 </script>
 </body>
 </html>
