@@ -1,4 +1,4 @@
-export const config = { api: { bodyParser: true } };
+export const config = { api: { bodyParser: false } };
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,11 +14,20 @@ export default async function handler(req, res) {
     const r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
       headers: { 'X-Master-Key': API_KEY, 'X-Bin-Meta': 'false' }
     });
-    const data = await r.json();
-    return res.status(r.status).json(data);
+    const text = await r.text();
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(r.status).send(text);
   }
 
   if (req.method === 'PUT') {
+    // manually read raw body stream
+    const rawBody = await new Promise((resolve, reject) => {
+      let data = '';
+      req.on('data', chunk => data += chunk.toString());
+      req.on('end', () => resolve(data));
+      req.on('error', reject);
+    });
+
     const r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: 'PUT',
       headers: {
@@ -26,10 +35,11 @@ export default async function handler(req, res) {
         'X-Master-Key': API_KEY,
         'X-Bin-Meta': 'false'
       },
-      body: JSON.stringify(req.body)
+      body: rawBody
     });
-    const data = await r.json();
-    return res.status(r.status).json(data);
+    const text = await r.text();
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(r.status).send(text);
   }
 
   res.status(405).json({ error: 'Method not allowed' });
